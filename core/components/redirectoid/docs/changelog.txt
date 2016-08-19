@@ -1,0 +1,17 @@
+Redirectoid 2.1.0-rc
+====================
+
+Optimizations.
+OS Github repo.
+
+
+Redirectoid 2.0.x
+=================
+
+Random child feature
+
+
+Redirectoid 1.x
+===============
+
+Initial release.

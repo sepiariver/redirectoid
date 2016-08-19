@@ -1,0 +1,45 @@
+{
+    "name": "Redirectoid"
+    ,"lowCaseName": "redirectoid"
+    ,"description": "A simple snippet that redirects to any Resource specified by ID, or a random child of a specified parent(s)."
+    ,"author": "YJ Tso @sepiariver"
+    ,"version": "2.1.0-rc1"
+    ,"package":{
+        "elements": {
+            "snippets": [{
+                "name": "Redirectoid"
+                ,"file": "redirectoid.snippet.php"
+                ,"description": "Version 2.1.0 - Redirects to the Resource with the ID set in the &id property, or optionally to a random child of defined parent(s). Supports 301, 302, 303, and 307 Response Codes as per HTTP/1.1 Protocol."
+                ,"properties": [{
+                    "name": "id"
+                },{
+                    "name": "context"
+                },{
+                    "name": "urlParamString"
+                },{
+                    "name": "scheme"
+                    ,"value": -1
+                },{
+                    "name": "parents"
+                },{
+                    "name": "showHidden"
+                    ,"value": 0
+                },{
+                    "name": "showDeleted"
+                    ,"value": 0
+                },{
+                    "name": "showUnpublished"
+                    ,"value": 0
+                },{
+                    "name": "responseCode"
+                },{
+                    "name": "useCtxMap"
+                    ,"value": 0
+                },{
+                    "name": "depth"
+                    ,"value": 1
+                }]
+            }]
+        }
+    }
+}
