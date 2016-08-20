@@ -67,7 +67,7 @@ if ($id === 'random') {
         foreach ($parents as $parent) {
             $children = array_merge($children, $modx->getChildIds($parent, $depth, array('context' => $context)));
         }
-        $id = $children[md_rand(0, count($children) - 1)];
+        $id = $children[mt_rand(0, count($children) - 1)];
     } else {
         $c = $modx->newQuery('modResource');
         $where = array(
