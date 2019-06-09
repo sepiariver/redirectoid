@@ -47,7 +47,6 @@
  */
 // Set options
 $id = $modx->getOption('id', $scriptProperties, $modx->getOption('site_start'), true);
-$id = (strtolower($id) === 'random' || strtolower($id) === 'rand') ? 'random' : (int) $id;
 $context = $modx->getOption('context', $scriptProperties, $modx->context->get('key'), true);
 $params = trim($modx->getOption('urlParamString', $scriptProperties, ''), '?');
 $scheme = $modx->getOption('scheme', $scriptProperties, -1);
@@ -57,8 +56,17 @@ $showDeleted = (int) $modx->getOption('showDeleted', $scriptProperties, 0);
 $showUnpublished = (int) $modx->getOption('showUnpublished', $scriptProperties, 0);
 $defaultCode = ($id === 'random') ? '307' : '301';
 $responseCode = $modx->getOption('responseCode', $scriptProperties, $defaultCode, true);
-$useCtxMap = $modx->getOption('useCtxMap', $scriptProperties, 0);
+$useCtxMap = $modx->getOption('useCtxMap', $scriptProperties, 1);
 $depth = $modx->getOption('depth', $scriptProperties, 1);
+
+// Handle ID
+if (strtolower($id) === 'random' || strtolower($id) === 'rand') {
+	$id = 'random';
+} elseif (strtolower($id) === 'firstchild' || strtolower($id) === 'first') {
+	$id = 'firstChild';
+} else {
+	$id = (int) $id;
+}
 
 // If 'random' flag is set, get a random child ID
 if ($id === 'random') {
@@ -84,6 +92,13 @@ if ($id === 'random') {
         $c->select('id');
         $id = $modx->getValue($c->prepare());
     }    
+}
+if ($id === 'firstChild') {
+	$children = array();
+    foreach ($parents as $parent) {
+	    $children = array_merge($children, $modx->getChildIds($parent, $depth, array('context' => $context)));
+    }
+    $id = $children[0];
 }
 
 //Set redirect status in accordance with HTTP/1.1 protocol defined here: http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
