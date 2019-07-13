@@ -68,38 +68,32 @@ if (strtolower($id) === 'random' || strtolower($id) === 'rand') {
 	$id = (int) $id;
 }
 
-// If 'random' flag is set, get a random child ID
-if ($id === 'random') {
-    if ($useCtxMap) {
-        $children = array();
-        foreach ($parents as $parent) {
-            $children = array_merge($children, $modx->getChildIds($parent, $depth, array('context' => $context)));
-        }
-        $id = $children[mt_rand(0, count($children) - 1)];
-    } else {
-        $c = $modx->newQuery('modResource');
-        $where = array(
-            'parent:IN' => $parents,
-            'deleted' => 0,
-        );
-        if (!$showHidden) $where['hidemenu'] = 0;
-        if (!$showUnpublished) $where['published'] = 1;
-        if (!$showDeleted) $where['deleted'] = 0;
-        
-        $c->where($where);
-        $c->sortby('RAND()');
-        $c->limit(1);
-        $c->select('id');
-        $id = $modx->getValue($c->prepare());
-    }    
-}
-if ($id === 'firstChild') {
-	$children = array();
-    foreach ($parents as $parent) {
-	    $children = array_merge($children, $modx->getChildIds($parent, $depth, array('context' => $context)));
-    }
-    $id = $children[0];
-}
+
+if ($useCtxMap) {
+    $children = array();
+	foreach ($parents as $parent) {
+	  	$children = array_merge($children, $modx->getChildIds($parent, $depth, array('context' => $context)));
+	}
+  	if ($id === 'random') $id = $children[mt_rand(0, count($children) - 1)];
+  	if ($id === 'firstChild') $id = $children[0];
+} else {
+  	$c = $modx->newQuery('modResource');
+	$where = array(
+	  	'parent:IN' => $parents,
+	  	'deleted' => 0,
+	);
+  	if (!$showHidden) $where['hidemenu'] = 0;
+  	if (!$showUnpublished) $where['published'] = 1;
+  	if (!$showDeleted) $where['deleted'] = 0;
+  
+  	$c->where($where);
+
+	if ($id === 'random') $c->sortby('RAND()');
+  	if ($id === 'firstChild') $c->sortby('menuindex');
+  	$c->limit(1);
+  	$c->select('id');
+ 	$id = $modx->getValue($c->prepare());
+}    
 
 //Set redirect status in accordance with HTTP/1.1 protocol defined here: http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
 switch ($responseCode) {
