@@ -1,3 +1,8 @@
+Redirectoid 2.2.1-pl
+====================
+
+Support `firstChild` target resource
+
 Redirectoid 2.1.0-rc
 ====================
 
