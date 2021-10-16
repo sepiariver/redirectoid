@@ -3,7 +3,7 @@
     ,"lowCaseName": "redirectoid"
     ,"description": "A simple snippet that redirects to any Resource specified by ID, or a random child of a specified parent(s)."
     ,"author": "YJ Tso @sepiariver"
-    ,"version": "2.2.0-pl"
+    ,"version": "2.2.1-pl"
     ,"package":{
         "elements": {
             "snippets": [{
