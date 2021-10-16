@@ -3,13 +3,13 @@
     ,"lowCaseName": "redirectoid"
     ,"description": "A simple snippet that redirects to any Resource specified by ID, or a random child of a specified parent(s)."
     ,"author": "YJ Tso @sepiariver"
-    ,"version": "2.2.1-pl"
+    ,"version": "2.2.2-pl"
     ,"package":{
         "elements": {
             "snippets": [{
                 "name": "Redirectoid"
                 ,"file": "redirectoid.snippet.php"
-                ,"description": "Version 2.2.0 - Redirects to the Resource with the ID set in the &id property, or optionally to a random child or first child of defined parent(s). Supports 301, 302, 303, and 307 Response Codes as per HTTP/1.1 Protocol."
+                ,"description": "Version 2.2.0"
                 ,"properties": [{
                     "name": "id"
                 },{

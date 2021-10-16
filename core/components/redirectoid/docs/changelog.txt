@@ -1,4 +1,4 @@
-Redirectoid 2.2.1-pl
+Redirectoid 2.2.2-pl
 ====================
 
 Support `firstChild` target resource
