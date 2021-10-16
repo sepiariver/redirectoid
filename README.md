@@ -20,7 +20,7 @@ As of version 2, you can redirect to a random child of a given parent(s) Resourc
 
 ### PARAMETERS
 
-- &id               ID of target Resource. Can be a string: 'random'. Default: site_start system setting
+- &id               ID of target Resource. Can be a string: 'random' or 'firstChild'. Default: site_start system setting
 - &context          Context of target Resource. Default: ''
 - &urlParamString   URL parameter string to send with the redirected request. Default ''
 - &scheme           Scheme for `$modx->makeUrl()` to use. Default: -1
