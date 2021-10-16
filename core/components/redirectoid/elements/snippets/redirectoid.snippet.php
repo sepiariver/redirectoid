@@ -14,7 +14,9 @@
  *
  * PARAMETERS:
  *
- * &id              ID of target Resource. Can be a string: 'random'. Default: site_start system setting
+ * &id              ID of target Resource. Can be a string: 'random' or 'firstChild'. Default: site_start system setting
+ * 					Note: if 'firstChild' and 'useCtxMap' are used together, naively the first element of the array
+ * 					returned by $modx->getChildIds($parent, $depth, ...) will be used.
  * &context         Context of target Resource. Default: 'web'
  * &urlParamString  URL parameter string to send with the redirected request
  * &scheme          Scheme for $modx->makeUrl to use. Default: -1
@@ -24,7 +26,8 @@
  * &showUnpublished Set to 1 to include unpublished Resources, in random child mode. Defaults to 0
  * &responseCode    '302', '303' or '307'. Set this to modify the response code sent to the client
  *                  Default: '' which sends '301'
- * &useCtxMap       Set to 1 to use the MODX Context Resource Map, in random child mode. Faster but doesn't allow queries like showing deleted Resources. Defaults to 0
+ * &useCtxMap       Set to 1 to use the MODX Context Resource Map, in random child mode. Faster but doesn't allow queries
+ * 					like showing deleted Resources. Defaults to 0
  * &depth           Depth to pass to $modx->getChildIds() in random child mode when &useCtxMap is truth-y. Defaults to 1
  *
  * USAGE EXAMPLES:

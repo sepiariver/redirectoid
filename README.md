@@ -1,6 +1,6 @@
 # Redirectoid
 
-A simple Snippet that redirects to any Resource specified by ID, or a random child of a specified parent(s).
+A simple Snippet that redirects to any Resource specified by ID, or a random child (or first child) of a specified parent(s).
 
 Redirectoid supports various response codes described here: [http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html).
 
