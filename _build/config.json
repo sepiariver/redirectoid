@@ -3,7 +3,7 @@
     ,"lowCaseName": "redirectoid"
     ,"description": "A simple snippet that redirects to any Resource specified by ID, or a random child of a specified parent(s)."
     ,"author": "YJ Tso @sepiariver"
-    ,"version": "2.2.2-pl"
+    ,"version": "3.0.0-rc1"
     ,"package":{
         "elements": {
             "snippets": [{
@@ -11,6 +11,8 @@
                 ,"file": "redirectoid.snippet.php"
                 ,"description": "Version 2.2.0"
                 ,"properties": [{
+                    "name": "default"
+                },{
                     "name": "id"
                 },{
                     "name": "context"
@@ -32,12 +34,6 @@
                     ,"value": 0
                 },{
                     "name": "responseCode"
-                },{
-                    "name": "useCtxMap"
-                    ,"value": 0
-                },{
-                    "name": "depth"
-                    ,"value": 1
                 }]
             }]
         }
