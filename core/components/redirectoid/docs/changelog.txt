@@ -1,22 +1,22 @@
+Redirectoid 3.0.0-rc1
+====================
+Bugfixes
+Removes useCtxMap option to mitigate unpredictable cases
+Introduces new defaults that changes behaviour in some implementations
+
 Redirectoid 2.2.2-pl
 ====================
-
 Support `firstChild` target resource
 
 Redirectoid 2.1.0-rc
 ====================
-
 Optimizations.
 OS Github repo.
 
-
 Redirectoid 2.0.x
 =================
-
 Random child feature
-
 
 Redirectoid 1.x
 ===============
-
 Initial release.

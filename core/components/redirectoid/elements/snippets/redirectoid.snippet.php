@@ -14,21 +14,18 @@
  *
  * PARAMETERS:
  *
- * &id              ID of target Resource. Can be a string: 'random' or 'firstChild'. Default: site_start system setting
- * 					Note: if 'firstChild' and 'useCtxMap' are used together, naively the first element of the array
- * 					returned by $modx->getChildIds($parent, $depth, ...) will be used.
+ * &default			ID of default target Resource. Default: site_start system setting.
+ * &id              ID of target Resource. Can be a string: 'random' or 'firstChild'. Default: $default
  * &context         Context of target Resource. Default: 'web'
  * &urlParamString  URL parameter string to send with the redirected request
- * &scheme          Scheme for $modx->makeUrl to use. Default: -1
+ * &scheme          Scheme for $modx->makeUrl to use. Default: link_tag_scheme system setting.
  * &parents         Comma-separated list of parent IDs for random child mode. Defaults to current Resource
+ * 					Note: if more than 1 parent ID is provided, 'firstChild' mode can be ambiguous.
  * &showHidden      Set to 1 to include Resources hidden from menus, in random child mode. Defaults to 0
  * &showDeleted     Set to 1 to include deleted Resources, in random child mode. Defaults to 0
  * &showUnpublished Set to 1 to include unpublished Resources, in random child mode. Defaults to 0
  * &responseCode    '302', '303' or '307'. Set this to modify the response code sent to the client
  *                  Default: '' which sends '301'
- * &useCtxMap       Set to 1 to use the MODX Context Resource Map, in random child mode. Faster but doesn't allow queries
- * 					like showing deleted Resources. Defaults to 0
- * &depth           Depth to pass to $modx->getChildIds() in random child mode when &useCtxMap is truth-y. Defaults to 1
  *
  * USAGE EXAMPLES:
  *
@@ -36,69 +33,35 @@
  * [[Redirectoid]]
  * 
  * This redirects to Resource ID '12' with a '307 Temporary Redirect' response.
- * [[Redirectoid?id=`12` &responseCode=`307`]]
+ * [[Redirectoid? &id=`12` &responseCode=`307`]]
  * 
  * This redirects to Resource ID '55' in the 'custom' context, with a url parameter 'service=logout'.
- * [[Redirectoid?id=`55` &context=`custom` &urlParamString=`service=logout`]]
+ * [[Redirectoid? &id=`55` &context=`custom` &urlParamString=`service=logout`]]
  * 
  * This redirects to a random child Resource of the current Resource with a '307 Temporary Redirect' response.
- * [[!Redirectoid?id=`random` &responseCode=`307`]]
+ * [[!Redirectoid? &id=`random` &responseCode=`307`]]
  * 
  * This redirects to a random child Resource of the specified parent, even if hidden from menus.
- * [[!Redirectoid?id=`random` &parents=`3,56,821` &showHidden=`1`]]
+ * [[!Redirectoid? &id=`random` &parents=`3,56,821` &showHidden=`1`]]
  *
  */
 // Set options
-$id = $modx->getOption('id', $scriptProperties, $modx->getOption('site_start'), true);
+$default = (int) $modx->getOption('default', $scriptProperties, $modx->getOption('site_start'), true);
+if ($default < 1) {
+	$default = $modx->getOption('site_start');
+}
+$id = $modx->getOption('id', $scriptProperties, $default, true); // mixed types: string, int
 $context = $modx->getOption('context', $scriptProperties, $modx->context->get('key'), true);
 $params = trim($modx->getOption('urlParamString', $scriptProperties, ''), '?');
-$scheme = $modx->getOption('scheme', $scriptProperties, -1);
+$scheme = $modx->getOption('scheme', $scriptProperties, $modx->getOption('link_tag_scheme'), true);
 $parents = array_filter(array_map('trim', explode(',', $modx->getOption('parents', $scriptProperties, $modx->resource->get('id'), true))));
 $showHidden = (int) $modx->getOption('showHidden', $scriptProperties, 0);
 $showDeleted = (int) $modx->getOption('showDeleted', $scriptProperties, 0);
 $showUnpublished = (int) $modx->getOption('showUnpublished', $scriptProperties, 0);
-$defaultCode = ($id === 'random') ? '307' : '301';
-$responseCode = $modx->getOption('responseCode', $scriptProperties, $defaultCode, true);
-$useCtxMap = $modx->getOption('useCtxMap', $scriptProperties, 1);
-$depth = $modx->getOption('depth', $scriptProperties, 1);
-
-// Handle ID
-if (strtolower($id) === 'random' || strtolower($id) === 'rand') {
-	$id = 'random';
-} elseif (strtolower($id) === 'firstchild' || strtolower($id) === 'first') {
-	$id = 'firstChild';
-} else {
-	$id = (int) $id;
-}
-
-
-if ($useCtxMap) {
-    $children = array();
-	foreach ($parents as $parent) {
-	  	$children = array_merge($children, $modx->getChildIds($parent, $depth, array('context' => $context)));
-	}
-  	if ($id === 'random') $id = $children[mt_rand(0, count($children) - 1)];
-  	if ($id === 'firstChild') $id = $children[0];
-} else {
-  	$c = $modx->newQuery('modResource');
-	$where = array(
-	  	'parent:IN' => $parents,
-	  	'deleted' => 0,
-	);
-  	if (!$showHidden) $where['hidemenu'] = 0;
-  	if (!$showUnpublished) $where['published'] = 1;
-  	if (!$showDeleted) $where['deleted'] = 0;
-  
-  	$c->where($where);
-
-	if ($id === 'random') $c->sortby('RAND()');
-  	if ($id === 'firstChild') $c->sortby('menuindex');
-  	$c->limit(1);
-  	$c->select('id');
- 	$id = $modx->getValue($c->prepare());
-}    
 
 //Set redirect status in accordance with HTTP/1.1 protocol defined here: http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
+$defaultCode = ($id === 'random') ? '307' : '301';
+$responseCode = $modx->getOption('responseCode', $scriptProperties, $defaultCode, true);
 switch ($responseCode) {
     case '302': $redirectStatus = 'HTTP/1.1 302 Found'; break;
     case '303': $redirectStatus = 'HTTP/1.1 303 See Other'; break;
@@ -106,6 +69,38 @@ switch ($responseCode) {
     default: $redirectStatus = 'HTTP/1.1 301 Moved Permanently';
 }
 
+// Handle ID
+if (strtolower($id) === 'random' || strtolower($id) === 'rand') {
+	$id = 'random';
+} elseif (strtolower($id) === 'firstchild' || strtolower($id) === 'first') {
+	$id = 'firstChild';
+} else {
+	// Early result if ID is not 'random' or 'firstChild'
+	$id = (empty($id)) ? abs($default) : (int) $id;
+	// Make the URL and send
+	$url = $modx->makeUrl($id, $context, $params, $scheme);
+	$modx->sendRedirect($url, ['responseCode' => $redirectStatus]);
+}
+
+$c = $modx->newQuery('modResource');
+$where = array(
+	'parent:IN' => $parents,
+	'deleted' => 0,
+);
+if (!$showHidden) $where['hidemenu'] = 0;
+if (!$showUnpublished) $where['published'] = 1;
+if (!$showDeleted) $where['deleted'] = 0;
+
+$c->where($where);
+
+if ($id === 'random') $c->sortby('RAND()');
+if ($id === 'firstChild') $c->sortby('menuindex', 'ASC');
+$c->limit(1);
+$c->select('id');
+$id = $modx->getValue($c->prepare());
+
+// Last chance
+$id = (empty($id)) ? abs($default) : (int) $id;
 // Make the URL and send
-$url = $modx->makeUrl($id,$context,$params,$scheme);
-$modx->sendRedirect($url,array('responseCode' => $redirectStatus)) ;
+$url = $modx->makeUrl($id, $context, $params, $scheme);
+$modx->sendRedirect($url, ['responseCode' => $redirectStatus]);
